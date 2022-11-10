@@ -1,57 +1,73 @@
 from django.db import models
-from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
 
-class MyUserManager(BaseUserManager):
-    def create_user(self, username, email, password=None):
-        if not email:
-            raise ValueError()
-        if not username:
-            raise ValueError()
 
-        user = self.model(email=self.normalize_email(email), username=username)
-        user.set_password(password)
-        user.save()
-        return user
+class Profile(models.Model):
+     user = models.OneToOneField(User, on_delete=models.CASCADE)
+     county = models.CharField(max_length=200)
+     association = models.CharField(max_length=200)
 
-    def create_superuser(self, username, email, password=None):
-        user = self.create_user(username=username, email=email, password=password)
-        user.admin = True
-        user.staff = True
-        user.superuser = True
-        user.save()
-        return user
+     def __str__(self):
+            return str(self.user)
 
-class User(AbstractBaseUser):
-    username = models.CharField(max_length=12, primary_key=True, unique=True)
-    id = models.IntegerField(default=1)
-    email = models.EmailField(max_length=255, blank=False, unique=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    association = models.CharField(max_length=255)
-    county = models.CharField(max_length=255)
-    active = models.BooleanField(default=True)
-    staff = models.BooleanField(default=False)
-    admin = models.BooleanField(default=False)
-    superuser = models.BooleanField(default=False)
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
 
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ['email']
-    objects = MyUserManager()
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
 
-    def has_perm(self, perm, obj=None):
-        return True
+class Question(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.CharField(max_length=200)
+    pub_date = models.DateTimeField(auto_now_add=True)
 
-    def has_module_perms(self, app_label):
-        return True
+    def __str__(self):
+        return self.question
 
-    @property
-    def is_staff(self):
-        return self.staff
 
-    @property
-    def is_superuser(self):
-        return self.superuser
-    @property
-    def is_active(self):
-        return self.active
+class Choice(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    choice = models.CharField(max_length=200)
+    votes = models.IntegerField(default=0)
+    
+
+    def __str__(self):
+        return f"{self.question}-{self.user}-{self.choice}"
+
+
+
+class Forum(models.Model):
+    username = models.CharField(max_length=255)
+    title = models.CharField(max_length=200)
+    text = models.TextField()
+    created     = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ('-created',)
+   
+    def __str__(self):
+        return self.title
+
+class ForumComment(models.Model):
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
+    username = models.CharField(max_length=255, blank=True, null=True)
+    comment = models.TextField()
+    up_vote = models.PositiveIntegerField(default=0)
+    down_vote = models.PositiveIntegerField(default=0)
+    created     = models.DateTimeField(default=timezone.now)
+   
+
+    
+    def __str__(self):
+        return self.comment
+
+
+
+
