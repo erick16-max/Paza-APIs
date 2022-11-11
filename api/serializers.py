@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import Choice, Question, ForumComment, Forum
+from .models import Choice, Question, ForumComment, Forum, ForumVote
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -68,9 +68,21 @@ class ForumSerializer(serializers.ModelSerializer):
 class ForumCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ForumComment
-        fields = ('id','forum', 'username', 'comment', 'up_vote','down_vote')
+        fields = ('id','forum', 'username', 'comment')
         extra_kwargs = {
                     'username': {'read_only': True},
+                    'forum':{'read_only':True},
+                    'id':{'read_only':True}
+                }
+
+class ForumVoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ForumVote
+        fields = ('id','forum', 'username', 'up_vote', 'down_vote')
+        extra_kwargs = {
+                    'username': {'read_only': True},
+                    'forum':{'read_only':True},
+                    'id':{'read_only':True}
                 }
 
 

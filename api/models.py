@@ -59,14 +59,19 @@ class ForumComment(models.Model):
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
     username = models.CharField(max_length=255, blank=True, null=True)
     comment = models.TextField()
-    up_vote = models.PositiveIntegerField(default=0)
-    down_vote = models.PositiveIntegerField(default=0)
     created     = models.DateTimeField(default=timezone.now)
+
+class ForumVote(models.Model):
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
+    username = models.CharField(max_length=255, blank=True, null=True)
+    up_vote = models.PositiveIntegerField()
+    down_vote = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.username
+
    
 
-    
-    def __str__(self):
-        return self.comment
 
 
 

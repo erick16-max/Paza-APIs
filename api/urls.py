@@ -15,7 +15,13 @@ urlpatterns = [
     path('forum/<int:pk>/update/', views.update_forum),
     path('forum/<int:pk>/delete/', views.delete_forum),
     path('forum/<int:pk>/comments/', views.get_comments),
+    path('forum/<int:pk>/create-comment/', views.create_comment),
     path('forum/<int:pk>/count-comments/', views.get_comments_count),
+    path('forum/<int:pk>/votes/', views.forum_get_votes),
+    path('forum/<int:pk>/post-vote/', views.post_vote),
+    path('forum/<int:pk>/count-votes/', views.get_vote_counts),
+
+
 
 
 
