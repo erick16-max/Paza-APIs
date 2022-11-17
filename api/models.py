@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.urls.resolvers import re
 
 
 class Profile(models.Model):
@@ -59,7 +60,13 @@ class ForumComment(models.Model):
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
     username = models.CharField(max_length=255, blank=True, null=True)
     comment = models.TextField()
-    created     = models.DateTimeField(default=timezone.now)
+    created  = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ('-created',)
+
+    def __str__(self):
+        return self.comment[:20]
 
 class ForumVote(models.Model):
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE)

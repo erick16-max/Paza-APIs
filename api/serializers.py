@@ -68,11 +68,12 @@ class ForumSerializer(serializers.ModelSerializer):
 class ForumCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ForumComment
-        fields = ('id','forum', 'username', 'comment')
+        fields = ('id','forum', 'username', 'comment', 'created')
         extra_kwargs = {
                     'username': {'read_only': True},
                     'forum':{'read_only':True},
-                    'id':{'read_only':True}
+                    'id':{'read_only':True},
+                    'created':{'read_only':True},
                 }
 
 class ForumVoteSerializer(serializers.ModelSerializer):
