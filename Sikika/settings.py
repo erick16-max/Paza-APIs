@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import django_heroku
+import dj_database_url
 from datetime import timedelta
 
 # Build paths inside the project like this: nano ~/pazaproject/pazaproject/settings.py ~/pazaproject/pazaproject/settings.pyASE_DIR / 'subdir'.
@@ -27,7 +28,7 @@ SECRET_KEY = 'django-insecure-8f)1)uj#u+opc2@+vaeh*+)*q%6b!x&n163q)d!s@tbm-o8_0l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
